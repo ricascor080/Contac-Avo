@@ -1,0 +1,99 @@
+{% load ui %}<!doctype html>
+<html lang="es-MX">
+<head>
+  {% include "partials/head.html" %}
+  <title>Iniciar sesión · AvoControl ERP</title>
+</head>
+<body>
+<div class="login">
+  <section class="login-hero" aria-hidden="true">
+    <div class="brand">
+      <div class="brand-mark">{% icon "brand" 20 %}</div>
+      <div class="brand-text">
+        <div class="brand-name">AvoControl ERP</div>
+        <div class="brand-sub">Empaques y comercializadoras de aguacate</div>
+      </div>
+    </div>
+
+    <div class="hero-copy">
+      <span class="hero-kicker">{% icon "check" 14 %} Del corte al contenedor</span>
+      <h1>Control total de tu empaque, de la báscula a la cédula fiscal.</h1>
+      <p>Recepción, corridas por calibre, liquidaciones a productores, embarques de exportación y
+        cumplimiento CFDI en un solo lugar, con los datos de cada empresa aislados.</p>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="l">Aprovechamiento</div>
+          <div class="v">77.10%</div>
+          <div class="mini"><span style="flex:77;background:var(--c-exportacion)"></span><span style="flex:14;background:var(--c-nacional)"></span><span style="flex:6;background:var(--c-canica)"></span><span style="flex:3;background:var(--c-merma)"></span></div>
+        </div>
+        <div class="hero-stat">
+          <div class="l">Kg recibidos</div>
+          <div class="v">29,690</div>
+        </div>
+        <div class="hero-stat">
+          <div class="l">Alertas CFDI</div>
+          <div class="v">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-foot">
+      <span>Multiempresa</span><span>·</span><span>Bitácora de accesos</span><span>·</span><span>CFDI 4.0 / REP / 32-D</span>
+    </div>
+  </section>
+
+  <main class="login-panel">
+    <div class="login-box">
+      <div class="brand login-mobile-brand">
+        <div class="brand-mark">{% icon "brand" 20 %}</div>
+        <div class="brand-text"><div class="brand-name">AvoControl ERP</div><div class="brand-sub">Empaques de aguacate</div></div>
+      </div>
+
+      <h2>Iniciar sesión</h2>
+      <p class="lead">Entra con el email y la contraseña que te dio el administrador de tu empresa.</p>
+
+      {% for m in messages %}
+        <div class="login-alert{% if m.tags != 'error' %} ok{% endif %}" role="alert">{% icon "alert" 18 %}<span>{{ m }}</span></div>
+      {% endfor %}
+      {% if form.non_field_errors %}
+        <div class="login-alert" role="alert">{% icon "alert" 18 %}<span>{{ form.non_field_errors.0 }}</span></div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <div class="field{% if form.email.errors %} has-error{% endif %}">
+          <label for="id_email">Email</label>
+          <div class="input-icon">
+            {% icon "mail" 18 %}
+            <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}" autocomplete="username" required autofocus placeholder="tu@empresa.mx">
+          </div>
+          {% for e in form.email.errors %}<div class="err">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field{% if form.password.errors %} has-error{% endif %}">
+          <label for="id_password">Contraseña</label>
+          <div class="input-icon">
+            {% icon "lock" 18 %}
+            <input type="password" name="password" id="id_password" autocomplete="current-password" required placeholder="••••••••••">
+            <button type="button" class="icon-btn reveal" data-reveal="id_password" aria-label="Mostrar contraseña">{% icon "eye" 18 %}</button>
+          </div>
+          {% for e in form.password.errors %}<div class="err">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="login-row">
+          <label class="check"><input type="checkbox" name="recordarme" {% if form.recordarme.value or not form.is_bound %}checked{% endif %}> Mantener sesión iniciada</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" style="height:46px">Entrar</button>
+      </form>
+
+      <p class="login-legal">¿Olvidaste tu contraseña? Pide al administrador de tu empresa que la restablezca.<br>
+        Acceso exclusivo para personal autorizado. Los accesos quedan registrados.</p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

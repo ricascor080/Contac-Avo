@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}{% if objeto %}Editar usuario{% else %}Nuevo usuario{% endif %}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">{% if objeto %}Editar usuario{% else %}Nuevo usuario{% endif %}</h1>
+    <p class="page-sub">{% if objeto %}{{ objeto.email }}{% else %}Tendrá acceso solo a {{ empresa.nombre }}.{% endif %}</p>
+  </div>
+  <a class="btn btn-ghost" href="{% url 'accounts:usuarios' %}">{% icon "arrow-left" 16 %} Volver</a>
+</div>
+
+<form method="post" class="card form-card" novalidate>
+  {% csrf_token %}
+  {% for e in form.non_field_errors %}<div class="login-alert">{{ e }}</div>{% endfor %}
+  <div class="form-grid">
+    {% include "partials/field.html" with f=form.nombre %}
+    {% include "partials/field.html" with f=form.email %}
+    {% include "partials/field.html" with f=form.rol cls="full" %}
+    {% include "partials/field.html" with f=form.password %}
+    {% if objeto %}{% include "partials/field.html" with f=form.is_active %}{% endif %}
+  </div>
+  {% if form.es_yo %}<p class="help muted" style="margin-top:14px">No puedes cambiar tu propio rol ni desactivarte; pídeselo a otro administrador.</p>{% endif %}
+  <div class="form-actions">
+    <a class="btn btn-ghost" href="{% url 'accounts:usuarios' %}">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}Dashboard ejecutivo{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Dashboard ejecutivo</h1>
+    <p class="page-sub">{{ empresa.razon_social }} · Temporada {{ empresa.temporada }}</p>
+  </div>
+</div>
+
+<section class="kpis" aria-label="Indicadores principales">
+  <article class="card kpi kpi--primary">
+    <div class="kpi-head"><span class="kpi-label">Kg recibidos vs. empacados</span>{% icon "scale" %}</div>
+    <div class="kpi-value">{{ k.kg_recibidos|num }}</div>
+    <div class="kpi-foot">{{ k.kg_exportacion|num }} kg empacados de exportación</div>
+  </article>
+
+  <article class="card kpi">
+    <div class="kpi-head"><span class="kpi-label">Aprovechamiento export.</span>{% icon "box" %}</div>
+    <div class="kpi-value">{{ k.aprovechamiento|pct }}</div>
+    <div class="kpi-foot">Sobre {{ k.neto|num }} kg corridos</div>
+  </article>
+
+  <article class="card kpi">
+    <div class="kpi-head"><span class="kpi-label">Contenedores en {{ k.mes_nombre }}</span>{% icon "container" %}</div>
+    <div class="kpi-value">{{ k.contenedores_mes }}</div>
+    <div class="kpi-foot">Ventas USD {{ k.usd_mes|num }} USD</div>
+  </article>
+
+  <article class="card kpi{% if k.saldo_liquidar %} kpi--warn{% endif %}">
+    <div class="kpi-head"><span class="kpi-label">Saldo por liquidar</span>{% icon "wallet" %}</div>
+    <div class="kpi-value">{{ k.saldo_liquidar|money }}</div>
+    <div class="kpi-foot">{{ k.liquidaciones_pendientes }} liquidaci{{ k.liquidaciones_pendientes|pluralize:"ón,ones" }} por pagar · {{ k.lotes_sin_liquidar }} lote{{ k.lotes_sin_liquidar|pluralize }} sin liquidar</div>
+  </article>
+
+  <article class="card kpi">
+    <div class="kpi-head"><span class="kpi-label">IVA acreditable exportación</span>{% icon "landmark" %}</div>
+    <div class="kpi-value">{{ k.iva_export|money }}</div>
+    <div class="kpi-foot">Total acreditable: {{ k.iva_total|money }}</div>
+  </article>
+</section>
+
+<section class="grid-2">
+  <article class="card">
+    <h2 class="card-title">Aprovechamiento por calibre (% del neto corrido)</h2>
+    {% if k.calibres %}
+    <div class="bars" role="img" aria-label="Porcentaje del neto corrido por calibre">
+      <div class="bars-axis">
+        {% for y in k.eje_y %}<span style="top:calc({{ forloop.counter0 }} * (100% - 26px) / 4)">{{ y }}%</span>{% endfor %}
+      </div>
+      <div class="bars-plot">
+        <div class="bars-area">
+          {% for y in k.eje_y %}<div class="gridline{% if forloop.last %} base{% endif %}" style="top:{% widthratio forloop.counter0 4 100 %}%"></div>{% endfor %}
+          {% for c in k.calibres %}
+          <div class="bar" tabindex="0" style="--h:{{ c.altura|stringformat:'.3f' }}%" aria-label="Calibre {{ c.calibre }}: {{ c.pct|pct }}, {{ c.kg|num }} kg">
+            <div class="bar-fill" style="height:{{ c.altura|stringformat:'.3f' }}%"></div>
+            <div class="bar-tip">Cal. {{ c.calibre }} · {{ c.pct|pct }} · {{ c.kg|num }} kg</div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="bars-x">{% for c in k.calibres %}<span>{{ c.calibre }}</span>{% endfor %}</div>
+      </div>
+    </div>
+    {% else %}
+      <p class="empty">Aún no hay corridas de empaque registradas.</p>
+    {% endif %}
+  </article>
+
+  <article class="card">
+    <h2 class="card-title">Balance de masa</h2>
+    {% if k.neto %}
+    <div class="stack" role="img" aria-label="Distribución del neto corrido">
+      {% for b in k.balance %}{% if b.kg %}<span style="flex:{{ b.pct|stringformat:'.4f' }};background:var(--c-{{ b.clave }})" title="{{ b.label }} {{ b.pct|pct }}"></span>{% endif %}{% endfor %}
+    </div>
+    {% endif %}
+    <ul class="legend">
+      {% for b in k.balance %}
+      <li><span class="dot" style="background:var(--c-{{ b.clave }})"></span>{{ b.label }}<span class="val">{{ b.kg|num }} kg · {{ b.pct|pct }}</span></li>
+      {% endfor %}
+      <li class="total">Neto corrido<span class="val">{{ k.neto|num }} kg</span></li>
+    </ul>
+  </article>
+</section>
+
+<section class="card">
+  <h2 class="card-title">Alertas de control ({{ k.alertas|length }}) {% if k.alertas %}<span style="color:var(--warn)">{% icon "alert" %}</span>{% endif %}</h2>
+  {% if k.alertas %}
+  <ul class="alerts">
+    {% for a in k.alertas %}
+    <li><span class="tag tag--{{ a.tono }}">{{ a.tag }}</span><span class="txt">{{ a.texto }}</span><a class="go" href="{{ a.url }}">Revisar</a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p class="empty">Sin pendientes de control. Todo en orden.</p>
+  {% endif %}
+</section>
+{% endblock %}

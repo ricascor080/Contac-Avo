@@ -1,0 +1,72 @@
+{% load ui %}<!doctype html>
+<html lang="es-MX">
+<head>
+  {% include "partials/head.html" %}
+  <title>{% block title %}AvoControl ERP{% endblock %} · AvoControl</title>
+  <script>try{if(localStorage.getItem("avocontrol.sidebar")==="collapsed")document.documentElement.classList.add("sidebar-collapsed")}catch(e){}</script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" aria-label="Menú principal">
+    <div class="brand">
+      <div class="brand-mark">{% icon "brand" 20 %}</div>
+      <div class="brand-text">
+        <div class="brand-name">AvoControl ERP</div>
+        <div class="brand-sub" title="{{ empresa.razon_social|default:'Administración de plataforma' }}">{{ empresa.nombre|default:"Administración de plataforma" }}</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      {% if user.es_superadmin %}
+      <div class="nav-section">
+        <div class="nav-title">Plataforma</div>
+        <a href="{% url 'core:empresas' %}" class="{% if request.resolver_match.app_name == 'core' and 'empresa' in request.resolver_match.url_name %}active{% endif %}" title="Empresas">{% icon "building" %}<span class="lbl">Empresas</span></a>
+      </div>
+      {% endif %}
+      {% if empresa %}
+        {% for s in menu %}
+        <div class="nav-section">
+          <div class="nav-title">{{ s.titulo }}</div>
+          {% for it in s.items %}
+          <a href="{{ it.href }}" class="{% if it.activo %}active{% endif %}" title="{{ it.label }}" {% if it.activo %}aria-current="page"{% endif %}>{% icon it.icon %}<span class="lbl">{{ it.label }}</span></a>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      {% endif %}
+    </nav>
+
+    <div class="sidebar-foot">
+      <a class="user-chip" href="{% url 'accounts:mi_cuenta' %}" title="Mi cuenta">
+        {% icon "landmark" %}
+        <span class="who">
+          <span class="email" style="display:block">{{ user.email }}</span>
+          <span class="rol">{{ user.get_rol_display }}</span>
+        </span>
+      </a>
+      <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}
+        <button class="nav-btn" type="submit" title="Cerrar sesión">{% icon "logout" %}<span class="lbl">Cerrar sesión</span></button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" type="button" data-toggle-sidebar aria-label="Mostrar/ocultar menú">{% icon "panel" %}</button>
+      {% if tipo_cambio %}
+      <span class="tc">TC DOF <b>{{ tipo_cambio.valor|num:4 }}</b> MXN/USD<span class="tc-date"> · {{ tipo_cambio.fecha|date:"d/m/Y" }}</span></span>
+      {% endif %}
+      <span class="spacer"></span>
+      {% if user.es_superadmin and empresa %}
+      <span class="tenant-chip">Viendo: <b>{{ empresa.nombre }}</b>
+        <a href="{% url 'core:empresas' %}">{% icon "switch" 14 %} Cambiar</a></span>
+      {% endif %}
+    </header>
+
+    <main class="content">
+      {% include "partials/messages.html" %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+</body>
+</html>

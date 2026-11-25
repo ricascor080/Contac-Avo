@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1 class="page-title">{{ titulo }}</h1><p class="page-sub">{{ empresa.razon_social }}</p></div></div>
+<div class="card placeholder">
+  <div class="ico">{% icon "construction" 26 %}</div>
+  <h2>Módulo en construcción</h2>
+  <p>Este módulo forma parte del plan de AvoControl y se construirá en una siguiente etapa.
+     Revisa el estado en <code>docs/DOCUMENTACION.md</code> (sección «Hoja de ruta»).</p>
+</div>
+{% endblock %}

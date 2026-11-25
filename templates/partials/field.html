@@ -1,0 +1,12 @@
+{# Campo de formulario estándar:  {% include "partials/field.html" with f=form.nombre cls="full" %} #}
+<div class="field {{ cls }}{% if f.errors %} has-error{% endif %}">
+  {% if f.field.widget.input_type == "checkbox" %}
+    <label class="check">{{ f }} {{ f.label }}</label>
+  {% else %}
+    <label for="{{ f.id_for_label }}">{{ f.label }}</label>
+    {% if f.field.widget.input_type == "radio" %}<div class="radios">{% for r in f %}<label>{{ r.tag }} {{ r.choice_label }}</label>{% endfor %}</div>
+    {% else %}{{ f }}{% endif %}
+  {% endif %}
+  {% if f.help_text %}<div class="help">{{ f.help_text }}</div>{% endif %}
+  {% for e in f.errors %}<div class="err">{{ e }}</div>{% endfor %}
+</div>

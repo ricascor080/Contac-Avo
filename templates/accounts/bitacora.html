@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Bitácora de accesos{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Bitácora de accesos</h1>
+    <p class="page-sub">Últimos 300 eventos de seguridad de {{ empresa.nombre }}: inicios de sesión, intentos fallidos y cambios de usuarios.</p>
+  </div>
+</div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Fecha</th><th>Evento</th><th>Usuario / email</th><th>IP</th><th>Detalle</th></tr></thead>
+      <tbody>
+      {% for e in eventos %}
+        <tr>
+          <td class="mono" style="white-space:nowrap">{{ e.fecha|date:"d/m/Y H:i:s" }}</td>
+          <td><span class="tag {% if e.tipo == 'login_ok' %}tag--ok{% elif e.tipo == 'login_fallido' %}tag--warn{% elif e.tipo == 'login_bloqueado' %}tag--crit{% else %}tag--muted{% endif %}">{{ e.get_tipo_display }}</span></td>
+          <td>{{ e.usuario.nombre|default:e.email }}{% if e.usuario %}<div class="muted" style="font-size:13px">{{ e.email }}</div>{% endif %}</td>
+          <td class="mono muted">{{ e.ip|default:"—" }}</td>
+          <td class="muted">{{ e.detalle }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="empty">Sin eventos.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

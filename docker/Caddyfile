@@ -1,0 +1,10 @@
+# HTTPS automático con Let's Encrypt para el dominio de .env (DOMINIO=erp.tuempresa.mx)
+{$DOMINIO} {
+	encode gzip
+	reverse_proxy web:8000
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		Referrer-Policy "same-origin"
+		-Server
+	}
+}

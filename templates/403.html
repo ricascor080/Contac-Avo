@@ -1,0 +1,10 @@
+{% load ui %}<!doctype html>
+<html lang="es-MX"><head>{% include "partials/head.html" %}<title>Sin permiso · AvoControl ERP</title></head>
+<body><main class="login-panel" style="min-height:100vh">
+  <div class="card placeholder" style="max-width:480px">
+    <div class="ico" style="background:var(--crit-bg);color:var(--crit)">{% icon "lock" 26 %}</div>
+    <h2>No tienes permiso para ver esto</h2>
+    <p>Tu rol no incluye acceso a esta sección. Si lo necesitas, pídelo al administrador de tu empresa.</p>
+    <p style="margin-top:20px"><a class="btn btn-primary" href="/">Ir al inicio</a></p>
+  </div>
+</main></body></html>

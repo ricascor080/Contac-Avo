@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}Empresas{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Empresas</h1>
+    <p class="page-sub">Tenants de la plataforma. Entra a una para ver su dashboard y administrar sus usuarios.</p>
+  </div>
+  <a class="btn btn-primary" href="{% url 'core:empresa_nueva' %}">{% icon "plus" %} Nueva empresa</a>
+</div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Empresa</th><th>RFC</th><th>Giro</th><th class="num">Temporada</th><th class="num">Usuarios</th><th>Estado</th><th></th></tr></thead>
+      <tbody>
+      {% for e in empresas %}
+        <tr>
+          <td><div class="person"><span class="avatar">{{ e.nombre|iniciales }}</span><div>{{ e.nombre }}{% if empresa and empresa.pk == e.pk %} <span class="tag tag--warn">Viendo</span>{% endif %}<small>{{ e.razon_social }}</small></div></div></td>
+          <td class="mono">{{ e.rfc|default:"—" }}</td>
+          <td>{{ e.get_giro_display }}</td>
+          <td class="num mono">{{ e.temporada }}</td>
+          <td class="num mono">{{ e.n_activos }}/{{ e.n_usuarios }}</td>
+          <td>{% if e.activa %}<span class="tag tag--ok">Activa</span>{% else %}<span class="tag tag--crit">Inactiva</span>{% endif %}</td>
+          <td class="num" style="white-space:nowrap">
+            <a class="btn btn-ghost btn-sm" href="{% url 'core:empresa_editar' e.pk %}">{% icon "pencil" 14 %} Editar</a>
+            <form method="post" action="{% url 'core:empresa_entrar' e.pk %}" style="display:inline">{% csrf_token %}
+              <button class="btn btn-primary btn-sm" type="submit">Entrar</button></form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="empty">Aún no hay empresas. Crea la primera.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
